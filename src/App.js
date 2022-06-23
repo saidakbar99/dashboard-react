@@ -11,11 +11,10 @@ function App() {
   }
 
   return (
-
     <div className="container">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard token={token} />} />
+          <Route path="/" element={<Dashboard token={token}/>} />
         </Routes>
       </BrowserRouter>
     </div>
