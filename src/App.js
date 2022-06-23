@@ -1,23 +1,21 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { useState } from 'react'
-
-
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import useToken from "./useToken";
 
 function App() {
-  const [ token, setToken ] = useState()
+  const {token, setToken} = useToken()
 
   if(!token) {
     return <Login setToken={setToken} />
   }
 
   return (
+
     <div className="container">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard token={token} />} />
         </Routes>
       </BrowserRouter>
     </div>
