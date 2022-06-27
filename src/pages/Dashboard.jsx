@@ -1,24 +1,23 @@
-export default function Dashboard({token}) {
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
+import {routes} from '../routes/routes'
 
-    async function logout() {
-        return fetch('https://cabinet.mdokon.uz/auth/logout',{
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        })
-        .then(data => data.json())
-    }
+
+export default function Dashboard() {
 
     return(
         <div>
-            <h1>DASHBOARD</h1>
-            <h2>AUTH OK</h2>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="*" element={<Navigate to='/dashboard' replace />} />
 
-            <span>TOKEN: {token}</span>
-            <br /><br /><br />
-            {/* <button onClick={() => {localStorage.clear(); window.location.reload()}}>LOGOUT</button> */}
-            <button onClick={logout}>LOGOUT</button>
+                    {
+                        routes.map(({path, element}, idx) => {
+                            return <Route key={idx} path={path} element={element} />
+                        })
+                    }
+
+                </Routes>
+            </BrowserRouter>
         </div>
     )
 }
