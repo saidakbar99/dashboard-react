@@ -1,29 +1,51 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 async function loginUser({username,password}) {
-    return fetch('https://cabinet.mdokon.uz/auth/login',{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({username,password})
-    })
-    .then(data => data.json())
+    // return fetch('https://cabinet.mdokon.uz/auth/login',{
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({username,password})
+    // })
+    // .then(data => data.json())
+    try{
+        let response = await fetch('https://cabinet.mdokon.uz/auth/login',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username,password})
+            })
+        return await response.json()
+    }catch(error){
+        console.log("Login error: ", error)
+    }
 }
 
 async function checkRole({access_token}) {
-    return fetch('https://cabinet.mdokon.uz/services/uaa/api/account', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + access_token
-        }
-    })
-    .then(data => data.json())
+    // return fetch('https://cabinet.mdokon.uz/services/uaa/api/account', {
+    //     method: 'GET',
+    //     headers: {
+    //         'Authorization': 'Bearer ' + access_token
+    //     }
+    // })
+    // .then(data => data.json())
+    try{
+        let response = await fetch('https://cabinet.mdokon.uz/services/uaa/api/account', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            }
+        })
+        return await response.json()
+    }catch(error){
+        console.log("Role error: ", error)
+    }
 }
-
 
 export default function Login({setToken}) {
     const [username, setUsername] = useState('')
@@ -39,7 +61,7 @@ export default function Login({setToken}) {
         
     }
     const wrongInput = () => {
-        toast.error('Error', {
+        toast.error('Error: 401 Unauthorized', {
             position: "bottom-left",
             autoClose: 5000,
             hideProgressBar: false,
@@ -47,9 +69,9 @@ export default function Login({setToken}) {
             pauseOnHover: false,
             draggable: false,
             progress: undefined,
+            delay: 500,
         });
     }
-
     return(
         <div className="login-wrapper">
             <h1>Log In</h1>

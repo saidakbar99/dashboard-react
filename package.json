@@ -3,21 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@iconify/json": "^2.1.73",
+    "@reduxjs/toolkit": "^1.8.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "apexcharts": "^3.35.3",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0-beta1",
     "bootstrap-icons": "^1.8.3",
-    "daisyui": "^2.17.0",
-    "flowbite": "^1.4.7",
     "react": "^18.2.0",
+    "react-apexcharts": "^1.4.0",
     "react-bootstrap": "^2.4.0",
+    "react-datepicker": "^4.8.0",
+    "react-debounce-input": "^3.3.0",
     "react-dom": "^18.2.0",
+    "react-paginate": "^8.1.3",
+    "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.4.0",
     "react-toastify": "^9.0.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -44,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@iconify/react": "^3.2.2",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "tailwindcss": "^3.1.4"

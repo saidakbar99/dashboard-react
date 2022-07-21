@@ -1,0 +1,16 @@
+.MyInput {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid lightgray;
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+.MyInput:focus {
+    border-color: #677DE7;
+}
+
+.searchPositionContainer {
+    width: 200px !important;
+    position: relative !important;
+}

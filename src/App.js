@@ -1,5 +1,5 @@
-import useToken from "./useToken";
-import { Container, Col, Row } from "react-bootstrap";
+import React from 'react'
+import useToken from "./hooks/useToken";
 
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -14,21 +14,11 @@ function App() {
   }
 
   return (
-    <div className="p-2">
-        <Row>
-          <Col xs={2}>
-            <Sidebar />
-          </Col>
-          <Col xs={10}>
-            <div className="">
-              <Topbar token={token} />
-              <div className="mt-[50px] p-4">
-                <Dashboard />
-              </div>
-            </div>
-          </Col>
-        </Row>
-    </div>
+      <div id="App">
+        <Sidebar />
+        <Topbar />
+        <Dashboard />
+      </div>
   );
 }
 
