@@ -3,15 +3,10 @@ import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import '../styles/Login.css'
+import '../styles/Circles.css'
+
 async function loginUser({username,password}) {
-    // return fetch('https://cabinet.mdokon.uz/auth/login',{
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({username,password})
-    // })
-    // .then(data => data.json())
     try{
         let response = await fetch('https://cabinet.mdokon.uz/auth/login',{
                 method: 'POST',
@@ -25,15 +20,7 @@ async function loginUser({username,password}) {
         console.log("Login error: ", error)
     }
 }
-
 async function checkRole({access_token}) {
-    // return fetch('https://cabinet.mdokon.uz/services/uaa/api/account', {
-    //     method: 'GET',
-    //     headers: {
-    //         'Authorization': 'Bearer ' + access_token
-    //     }
-    // })
-    // .then(data => data.json())
     try{
         let response = await fetch('https://cabinet.mdokon.uz/services/uaa/api/account', {
             method: 'GET',
@@ -61,6 +48,7 @@ export default function Login({setToken}) {
         
     }
     const wrongInput = () => {
+        window.localStorage.setItem('login', username)
         toast.error('Error: 401 Unauthorized', {
             position: "bottom-left",
             autoClose: 5000,
@@ -69,38 +57,86 @@ export default function Login({setToken}) {
             pauseOnHover: false,
             draggable: false,
             progress: undefined,
-            delay: 500,
+            delay: 1000,
         });
     }
     return(
-        <div className="login-wrapper">
-            <h1>Log In</h1>
-            <form onSubmit={handleSubmit}>
-                <label>
-                <p>Username</p>
-                <input type="text" onChange={(e) => setUsername(e.target.value)} />
-                </label>
-                <label>
-                <p>Password</p>
-                <input type="password" onChange={(e) => setPassword(e.target.value)} />
-                </label>
-                <div>
-                <button type="submit" onClick={wrongInput}>Submit</button>
+        <>
+        <ToastContainer
+            limit={1}
+            position="bottom-left"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+        />
+        <div className='auth-bg'>
+            <div className="account-pages h-100 vertical-center">
+                <div className='container'>
+                    <div className='row align-items-center justify-content-center'>
+                        <div className='col-md-8 col-lg-6 col-xl-4'>
+                            <div className='auth-card'>
+                                <div className='text-center my-2'>
+                                    <h3 className='login-header'>Вход в систему</h3>
+                                </div>
+                                <div className='p-2'>
+                                    <form onSubmit={handleSubmit}>
+                                        <input 
+                                            type="text"
+                                            name='username'
+                                            className='login-input'
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            value={username}
+                                            placeholder='Логин'
+                                            autoComplete="off"
+                                        />
+                                        <input 
+                                            type="password" 
+                                            name='password'
+                                            className='login-input'
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            value={password}
+                                            placeholder='Пароль'
+                                        />
+                                        <div className='text-center' onClick={wrongInput}>
+                                            <button type='submit' className='login-button'>Войти</button>
+                                        </div>
+                                        <div className='text-white text-center mt-4 fw-medium fz-09'>
+                                            Забыли пароль?
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
-            <ToastContainer
-                limit={1}
-                position="bottom-left"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable={false}
-                pauseOnHover={false}
-            />
+                <div className='about-mdokon position-absolute'>
+                Контакт-центр: +998 55 500-00-89 <br />
+                Производитель: ООО «AUTOMATION SOURCE», Республика Узбекистан <br />
+                Программное обеспечение для автоматизации торговых сетей и точек «mDokon– POS»
+                </div>
+                <div className=''>
+                    <ul className='circles'>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
         </div>
+        </>
+        
     )
 }
 

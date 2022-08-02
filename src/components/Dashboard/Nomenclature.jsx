@@ -4,8 +4,9 @@ import Select from 'react-select'
 import Dropdown from 'react-bootstrap/Dropdown';
 import {utils,writeFileXLSX} from 'xlsx'
 import {DebounceInput} from 'react-debounce-input';
+import DatePicker from "react-datepicker";
 
-import { numberFormatter, onlyNumbers } from '../../utils/formatter'
+import { numberFormatter, onlyNumbers, dateFormatterWithoutTime } from '../../utils/formatter'
 import { GET } from '../../api/api'
 
 const optionsPos = []
@@ -29,21 +30,21 @@ export default function Nomenclature() {
     const [showFilters, setShowFilters] = useState(false)
 
     const [searchInput, setSearchInput] = useState('')
-    const [inStorage, setInStorage] = useState()
+    const [inStorage, setInStorage] = useState(0)
     const [posSelect, setPosSelect] = useState()
     const [orgSelect, setOrgSelect] = useState()
 
     const [edit, setEdit] = useState(false)
     const [editRow, setEditRow] = useState()
 
-    const [, updateState] = useState();
 
     const [newAllData, setNewAllData] = useState([])
 
     const forceUpdate = useForceUpdate();
+    const [clearFiltersUpdate, setClearFiltersUpdate] = useState(1)
+    const [startDate, setStartDate] = useState([]);
 
-    // let allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20`
-    let allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20`
+    let allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20${posSelect ? `&posId=${posSelect.value}` : ''}${orgSelect ? `&organizationId=${orgSelect.value}` : ''}${inStorage ? `&balance=${inStorage}` : ''}${searchInput ? `&search=${searchInput}` : ''}`
     let totalUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-total`
     let token = JSON.parse(localStorage.getItem('token'))
     useEffect(() => {
@@ -57,7 +58,7 @@ export default function Nomenclature() {
             setNewAllData(response.data)
         })
 
-    }, [itemOffset, currentPage, allDataUrl, totalUrl])
+    }, [itemOffset, currentPage, clearFiltersUpdate, allDataUrl, totalUrl])
 
 
     const handlePageClick = (event) => {
@@ -81,13 +82,15 @@ export default function Nomenclature() {
 
     function setOptions(res, arr) {
         for(let i=0;i<res.length;i++){
-            arr.push({value: res[i].id, label: res[i].name},)
+            if(arr.length !== res.length){
+                arr.push({value: res[i].id, label: res[i].name},)
+            }
         }
     }
 
     function filterBtnHandler() {
         setShowDropdown(false)
-        allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20${posSelect ? `&posId=${posSelect.value}` : ''}${orgSelect ? `&organizationId=${orgSelect.value}` : ''}${inStorage ? `&balance=${inStorage}` : ''}${searchInput ? `&search=${searchInput}` : ''}`
+        allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20${posSelect ? `&posId=${posSelect?.value}` : ''}${orgSelect ? `&organizationId=${orgSelect?.value}` : ''}${inStorage ? `&balance=${inStorage}` : ''}${searchInput ? `&search=${searchInput}` : ''}`
         totalUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-total?${posSelect ? `&posId=${posSelect.value}` : ''}${orgSelect ? `&organizationId=${orgSelect.value}` : ''}${inStorage ? `&balance=${inStorage}` : ''}${searchInput ? `&search=${searchInput}` : ''}`
         GET(totalUrl, token).then(response => setTotalSum(response.data))
         GET(allDataUrl,token).then(response => {
@@ -98,27 +101,47 @@ export default function Nomenclature() {
         setShowFilters(true)
         
     }
+    console.log(allDataUrl)
     function clearFilters() {
         setSearchInput('')
-        setInStorage()
-        setPosSelect()
-        setOrgSelect()
+        setInStorage(0)
+        setPosSelect(null)
+        setOrgSelect(null)
         setShowFilters(false)
-        allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=${currentPage}&size=20`
+        setClearFiltersUpdate(Math.random() + 200)
+        allDataUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-pageList?page=0&size=20`
         totalUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-total`
+        
     }
-
-    
 
     function makeExcel() {
-        let workbook = utils.book_new(),
-        worksheet = utils.json_to_sheet(allData)
-
-        utils.book_append_sheet(workbook, worksheet, 'SheetJS')
-        writeFileXLSX(workbook, 'Номенклатура.xlsx')
-        //доделать чтобы показывал как на таблице
+        let excelUrl = `https://cabinet.mdokon.uz/services/web/api/nomenclature-excel?${posSelect ? `&posId=${posSelect.value}` : ''}${orgSelect ? `&organizationId=${orgSelect.value}` : ''}${inStorage ? `&balance=${inStorage}` : ''}${searchInput ? `&search=${searchInput}` : ''}`
+        const workbook = utils.book_new()
+        
+        GET(excelUrl,token).then(response => {
+            const newArray = response.data.map((col) => {
+                return (
+                    {
+                        'Торговая точка': col.posName,
+                        'Наименование товара': col.productName,
+                        'Поставщик': col.organizationName,
+                        'Штрих-код': col.barcode,
+                        'Цена поступление': col.price,
+                        'Оптом цена': col.wholesalePrice,
+                        'Цена за единицу': col.salePrice,
+                        'Валюта': col.currencyName,
+                        'Серия': col.serial,
+                        'Срок годности': dateFormatterWithoutTime(col.expDate),
+                        'На складе': col.quantity,
+                        'Единица измерения': col.uomName,
+                    }
+                )
+            })
+            const worksheet = utils.json_to_sheet(newArray)
+            utils.book_append_sheet(workbook, worksheet, 'SheetJS')
+            writeFileXLSX(workbook, 'Номенклатура.xlsx')
+        })
     }
-
 
     async function editData(post,token) {
         try{
@@ -154,11 +177,19 @@ export default function Nomenclature() {
         newAllDataCopy[i][e.target.name] = e.target.value
         setNewAllData(newAllDataCopy)
     }
-    console.log(newAllData)
+    function changeDate(date,i) {
+        let startDateCopy = [...startDate]
+        startDateCopy[i] = date
+        setStartDate(startDateCopy)
+
+        let newAllDataCopy = [...newAllData]
+        newAllDataCopy[i]['expDate'] = date
+        setNewAllData(newAllDataCopy)
+    }
     return(
         <div className="page-content">
-            <div className='mb-4'>
-                <h4 className="header-text">Номенклатура</h4>
+            <div className='mb-3'>
+                <h4 className="header-text vertical-center">Номенклатура</h4>
             </div>
             <div className='card'>
                 <div className='d-flex justify-content-between mb-4'>
@@ -176,7 +207,7 @@ export default function Nomenclature() {
                         </div>
 
                         <Dropdown show={showDropdown}>
-                            <Dropdown.Toggle className='mx-2 px-4' variant="outline-primary shadow-none" id="dropdown-basic" onClick={() => setShowDropdown(!showDropdown)}>
+                            <Dropdown.Toggle className='mx-2 px-4 py-2 fz-09' variant="outline-primary shadow-none" id="dropdown-basic" onClick={() => setShowDropdown(!showDropdown)}>
                                 Фильтр
                             </Dropdown.Toggle>
 
@@ -189,6 +220,7 @@ export default function Nomenclature() {
                                                 options={optionsPos}
                                                 placeholder=''
                                                 onChange={(option) => setPosSelect(option)}
+                                                value={posSelect}
                                             />
                                         </div>
 
@@ -198,6 +230,7 @@ export default function Nomenclature() {
                                                 options={optionsOrganization} 
                                                 placeholder=''
                                                 onChange={(option) => setOrgSelect(option)}
+                                                value={orgSelect}
                                             />
                                         </div>
                                     </div>
@@ -207,7 +240,7 @@ export default function Nomenclature() {
                                             type="text" 
                                             className='filter-drop-input'
                                             onChange={(e) => setInStorage(e.target.value)}
-                                            value={inStorage}
+                                            value={inStorage ? inStorage : ''}
                                             onKeyPress={onlyNumbers}
                                         />
                                     </div>
@@ -231,7 +264,7 @@ export default function Nomenclature() {
                         
                         <button 
                             type="button" 
-                            className="btn btn-outline-primary filter-btn shadow-none px-4"
+                            className="btn btn-outline-primary filter-btn shadow-none px-4 fz-09"
                             onClick={makeExcel}
                         >
                             EXCEL
@@ -250,9 +283,9 @@ export default function Nomenclature() {
                             <strong>Фильтр</strong>
                             <br />
                             {searchInput && <span><b>Поиск:</b> {searchInput}</span>}
-                            {showFilters ? <span><b>Торговая точка:</b> {posSelect?.label}</span> : ''}
-                            {showFilters ? <span><b>Поставщик:</b> {orgSelect?.label}</span> : ''}
-                            {showFilters ? <span><b>На складе:</b> {inStorage}</span> : ''}
+                            {showFilters && posSelect ? <span><b>Торговая точка:</b> {posSelect?.label}</span> : ''}
+                            {showFilters && orgSelect ? <span><b>Поставщик:</b> {orgSelect?.label}</span> : ''}
+                            {showFilters && inStorage ? <span><b>На складе:</b> {inStorage}</span> : ''}
                         </div>
                         <div>
                             <button 
@@ -271,10 +304,10 @@ export default function Nomenclature() {
                     <table className="table table-sm text-alignment">
                         <thead>
                             <tr className='nomenclature-thead'>
-                                <th>№</th>
+                                <th className='text-left'>№</th>
                                 <th className='text-left'>Торговая точка</th>
                                 <th className='text-left'>Наименование товара</th>
-                                <th>Поставщик</th>
+                                <th className='text-left'>Поставщик</th>
                                 <th>Штрих-код</th>
                                 <th>Цена поступление</th>
                                 <th>Оптом цена</th>
@@ -290,17 +323,17 @@ export default function Nomenclature() {
                             {allData.map((r, index) => {
                                 return(
                                     <tr key={index} className='nomenclature-table-fetched'>
-                                        <td>{index + 1 + currentPage * 20}</td>
-                                        <td>{r.posName}</td>
+                                        <td className='text-left'>{index + 1 + currentPage * 20}</td>
+                                        <td className='text-left'>{r.posName}</td>
                                         <td className='text-left'>{r.productName}</td>
                                         <td className='text-left'>{r.organizationName}</td>
-                                        <td className='white-space-nowrap'>{r.barcode}</td>
+                                        <td className='white-space-nowrap '>{r.barcode}</td>
                                         <td className='white-space-nowrap'>
                                             {edit & editRow === index
                                             ?   <input 
                                                     type='text'
                                                     name='price'
-                                                    className='addedProduct-input' 
+                                                    className='addedProduct-input'
                                                     value={newAllData[index].price}
                                                     onChange={(e) => handleInputChange(e,index)}
                                                 />
@@ -313,7 +346,7 @@ export default function Nomenclature() {
                                             ?   <input 
                                                     type='text'
                                                     name='wholesalePrice'
-                                                    className='addedProduct-input' 
+                                                    className={`addedProduct-input ${ parseInt(r.price) > parseInt(r.wholesalePrice) ? 'input-error' : ''}`}
                                                     value={newAllData[index].wholesalePrice}
                                                     onChange={(e) => handleInputChange(e,index)}
                                                 />
@@ -325,7 +358,7 @@ export default function Nomenclature() {
                                             ?   <input 
                                                     type='text'
                                                     name='salePrice'
-                                                    className='addedProduct-input' 
+                                                    className={`addedProduct-input ${ parseInt(r.wholesalePrice) > parseInt(r.salePrice) || parseInt(r.price) > parseInt(r.salePrice) ? 'input-error' : ''}`}
                                                     value={newAllData[index].salePrice}
                                                     onChange={(e) => handleInputChange(e,index)}
                                                 />
@@ -334,18 +367,62 @@ export default function Nomenclature() {
                                         </td>
                                         <td>{r.currencyName}</td>
                                         <td>{r.serial}</td>
-                                        <td className='white-space-nowrap'>{r.expDate}</td>
+                                        <td className='white-space-nowrap'>
+                                            {edit & editRow === index
+                                            // ?   <input 
+                                            //         type='text'
+                                            //         name='expDate'
+                                            //         className='addedProduct-input' 
+                                            //         value={newAllData[index].expDate ? newAllData[index].expDate : ''}
+                                            //         onChange={(e) => handleInputChange(e,index)}
+                                            //     />
+                                            ?   <DatePicker
+                                                    autoComplete='off'
+                                                    name='expDate'
+                                                    id='expDate'
+                                                    dateFormat="dd.MM.yyyy"
+                                                    disabledKeyboardNavigation
+                                                    tabIndex={-1}
+                                                    className='addedProduct-input'
+                                                    selected={startDate[index]}
+                                                    onChange={(date) => changeDate(date,index)}
+                                                />
+                                            :   dateFormatterWithoutTime(r.expDate)
+                                            }
+                                            {}
+                                        </td>
                                         <td className='white-space-nowrap'>{r.balance} {r.uomName}</td>
                                         <td>
                                             {r.lastId 
                                             ?   edit
                                                 ?   editRow === index 
-                                                    ?   <div className=''>
-                                                            <i id='edit-icon' className="bi bi-check-square" onClick={() => changeData(newAllData[index], token)}></i>
-                                                            <i id='edit-close-icon' className="bi bi-x-square" onClick={() => setEdit(false)}></i>
+                                                    ?   <div className='d-flex justify-content-center'>
+                                                            <div className='check-icon-container me-2'>
+                                                                <i 
+                                                                    tabIndex={-1} 
+                                                                    onClick={() => changeData(newAllData[index], token)}
+                                                                    className="bi bi-check"
+                                                                    id='check-icon'
+                                                                ></i>
+                                                            </div>
+                                                            <div className='delete-icon-container'>
+                                                                <i 
+                                                                    tabIndex={-1} 
+                                                                    onClick={() => setEdit(false)}
+                                                                    className="bi bi-x"
+                                                                    id='delete-icon'
+                                                                ></i>
+                                                            </div>
                                                         </div>
                                                     :   ''
-                                                :   <div><i id='edit-icon' className="bi bi-pencil-square" onClick={() => canEdit(index)}></i></div>
+                                                :   <div className='d-flex justify-content-center'>
+                                                        <div className='edit-icon-container' onClick={() => canEdit(index)}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" id='edit-icon' 
+                                                                width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M5 18h4.24a1 1 0 0 0 .71-.29l6.92-6.93L19.71 8a1 1 0 0 0 0-1.42l-4.24-4.29a1 1 0 0 0-1.42 0l-2.82 2.83l-6.94 6.93a1 1 0 0 0-.29.71V17a1 1 0 0 0 1 1Zm9.76-13.59l2.83 2.83l-1.42 1.42l-2.83-2.83ZM6 13.17l5.93-5.93l2.83 2.83L8.83 16H6ZM21 20H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
                                             :   ''
                                             }
                                         </td>
@@ -364,7 +441,7 @@ export default function Nomenclature() {
                         pageCount={pageCount}
                         previousLabel="< Пред"
                         renderOnZeroPageCount={null}
-                        containerClassName="pagination justify-content-center"
+                        containerClassName="pagination justify-content-start"
                         pageClassName="page-item"
                         pageLinkClassName="page-link"
                         previousClassName="page-item"

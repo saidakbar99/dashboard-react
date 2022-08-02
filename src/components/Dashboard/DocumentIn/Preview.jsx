@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {useLocation, Link} from 'react-router-dom'
 
-
 import {GET} from '../../../api/api'
 import {dateFormatterWithoutTime, numberFormatter} from '../../../utils/formatter'
 
@@ -9,42 +8,45 @@ export default function Preview() {
     const id = useLocation().pathname.split('/').slice(-1)
 
     const [idData, setIdData] = useState({})
+    const [forceUpdate, setForecUpdate] = useState(0)
 
     let token = JSON.parse(localStorage.getItem('token'))
     const dataUrl = `https://cabinet.mdokon.uz/services/web/api/documents-in/${id}`
-    const deleteUrl = `https://cabinet.mdokon.uz/services/web/api/delete-documents-in-product/${id}`
     useEffect(() => {
         GET(dataUrl, token).then(response => {
             setIdData(response.data)
         })
-    }, [])
+    }, [forceUpdate])
 
-    async function deleteProduct(token) {
+    async function deleteProduct(token,pId) {
         try{
-            let response = await fetch(deleteUrl,{
+            return fetch(`https://cabinet.mdokon.uz/services/web/api/delete-documents-in-product/${pId}`,{
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token.access_token
                     },
-                })
-            return await response.json()
+                }).then(() => setForecUpdate(Math.random()))
+            
+             
         }catch(error){
             console.log("Delete Error: ", error)
         }
     }
 
-    const {createdDate, currencyId, currencyName, inNumber, note, organizationId,
-    organizationName, paymentTypeId, paymentTypeName, posId, posName, sumDifference,
-    sumPrice, sumSalePrice, totalAmount, productList} = idData
+    const {createdDate, currencyName, inNumber, note, organizationName,
+            posName, sumSalePrice, totalAmount, productList} = idData
 
-    console.log()
     return (
         <div className="page-content">
             <div className="d-flex justify-content-between mb-2">
                 <div className="d-flex">
-                    <h4 className="header-text">Прием товаров &gt;&gt;</h4>
-                    <h6 className='create-sub-heading'>Предварительный просмотр</h6>
+                    <h4 className="header-text">Прием товаров</h4>
+                    <div className='vertical-center mt-1px'>
+                        <svg xmlns="http://www.w3.org/2000/svg" className='fz-20' aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M8.46 8.29A1 1 0 1 0 7 9.71L9.34 12L7 14.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 0-1.42Zm8.5 3l-3-3a1 1 0 0 0-1.42 1.42l2.3 2.29l-2.3 2.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 .04-1.42Z"/></svg>
+
+                    </div>
+                    <h6 className='create-sub-heading vertical-center'>Предварительный просмотр</h6>
                 </div>
             </div>
             <div className='card mb-4'>
@@ -53,32 +55,32 @@ export default function Preview() {
                     <div className='me-3'>
                         <div className='d-flex justify-content-between'>
                             <span className='preview-card1-header'>Торговая точка:</span>
-                            <span>{posName}</span>
+                            <span className='color-626262'>{posName}</span>
                         </div>
                         <div className='d-flex justify-content-between'>
                             <span className='preview-card1-header'>Поставщик:</span>
-                            <span>{organizationName}</span>
+                            <span className='color-626262'>{organizationName}</span>
                         </div>
                         <div className='d-flex justify-content-between'>
                             <span className='preview-card1-header'>Валюта:</span>
-                            <span>{currencyName}</span>
+                            <span className='color-626262'>{currencyName}</span>
                         </div>
                     </div>
                     <div className='me-3'>
                         <div className='d-flex justify-content-between'>
                             <span className='preview-card1-header'>№ Накладной:</span>
-                            <span>{inNumber}</span>
+                            <span className='color-626262'>{inNumber}</span>
                         </div>
                         <div className='d-flex justify-content-between'>
                             <span className='preview-card1-header'>Примечание:</span>
-                            <span>{note}</span>
+                            <span className='color-626262'>{note}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className='card'>
                 <div className='table-responsive table-scroll w-100'>
-                        <table className="table table-striped table-sm">
+                        <table className="table table-striped">
                             <thead>
                                 <tr className='create-table'>
                                     <th id='text-left'>Наименование товара</th>
@@ -96,6 +98,7 @@ export default function Preview() {
                             </thead>
                             <tbody>
                                 {productList?.content.map((p,i) => {
+                                    console.log(p.productId)
                                     return(
                                         <tr key={p.barcode} className='preview-table'>
                                             <td id='text-left'>{i+1}. {p.productName}</td>
@@ -113,11 +116,16 @@ export default function Preview() {
                                                 ?   p.status === 1
                                                     ?   <span className='text-danger'>Используется</span>
                                                     :   <span className='text-danger'>Удалено</span>
-                                                :   <i 
-                                                        id='edit-close-icon' 
-                                                        className="bi bi-x-square" 
-                                                        onClick={() => deleteProduct(token)}
-                                                    ></i>
+                                                :   <div className='d-flex justify-content-center'>
+                                                        <div className='delete-icon-container mx-4 '>
+                                                            <i 
+                                                                tabIndex={-1} 
+                                                                onClick={() => {deleteProduct(token,p.id)}}
+                                                                className="bi bi-x"
+                                                                id='delete-icon'
+                                                            ></i>
+                                                        </div>
+                                                    </div>   
                                                 }
                                                 
                                             </td>

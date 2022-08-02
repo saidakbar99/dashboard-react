@@ -4,7 +4,6 @@ import ReactApexChart from 'react-apexcharts'
 
 import { numberFormatter } from '../../utils/formatter'
 import { GET } from '../../api/api'
-import chart from '../../assets/chart-main.svg'
 
 export default function Main() {
     const [chartInfo, setChartInfo] = useState({
@@ -83,6 +82,7 @@ export default function Main() {
                 x: date[2],
                 y: data.incomeSum
               })
+              return 0
             })
             result.data.incomeLast.map((data) => {
               let date = data.incomeDate.split('-')
@@ -131,14 +131,14 @@ export default function Main() {
                         <div className="d-flex justify-content-between">
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.cashAmount)}</p>
                             <div className="d-flex">
-                              <p className="mb-0 nalichnie">Наличные</p>
+                              <p className="mb-0 nalichnie me-1">Наличные</p>
                               <i className="bi bi-cash nalichnie mx-2"></i>
                             </div>
                         </div>
                         <div className="d-flex justify-content-between">
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.cardAmount)}</p>
                             <div className="d-flex">
-                              <p className="mb-0 terminal">Терминал</p>
+                              <p className="mb-0 terminal me-1">Терминал</p>
                               <i className="bi bi-credit-card terminal mx-2"></i>
                             </div>
                         </div>

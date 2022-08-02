@@ -1,8 +1,11 @@
 export function numberFormatter(num) {
     if(num){
-        return num.toLocaleString('en-Us').split(',').join(' ')
+        let number = num.toLocaleString('ru',{
+            minimumFractionDigits: 2
+        })
+        return number.split(',').join('.')
     }else{
-        return true
+        return 0
     }
 }
 
@@ -20,7 +23,7 @@ export function dateFormatterWithoutTime(date) {
         const formattedDate = onlyDate[0].split('-').reverse().join('.')
         return formattedDate
     }else{
-        return true
+        return ''
     }
     
 }

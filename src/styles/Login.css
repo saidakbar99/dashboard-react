@@ -1,0 +1,75 @@
+.auth-bg {
+    height: 100vh;
+    background: linear-gradient(90deg,#5b73e8,#776bcc);
+}
+
+  
+@keyframes AnimateBG { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+.about-mdokon {
+    color: #fff;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10;
+    font-size: 0.9rem;
+}
+.account-pages {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #626262;
+}
+.auth-card {
+    z-index: 999999;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 0 solid #f6f6f6;
+    border-radius: 0.25rem;
+}
+.login-input {
+    -webkit-appearance: none;
+    appearance: none;
+    outline: 0;
+    border: 1px solid hsla(0,0%,100%,.3);
+    background-color: hsla(0,0%,100%,.1);
+    width: 250px;
+    border-radius: 3px;
+    padding: 10px 15px;
+    margin: 0 auto 10px;
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+    transition-duration: .25s;
+    font-weight: 400;
+}
+.login-button {
+    -webkit-appearance: none;
+    appearance: none;
+    outline: 0;
+    background-color: #fff;
+    border: 0;
+    padding: 10px 15px;
+    color: #5b73e8;
+    border-radius: 3px;
+    width: 250px;
+    cursor: pointer;
+    font-size: 18px;
+    transition-duration: .25s;
+}
+.login-header {
+    color: white;
+    font-weight: 400;
+    font-size: 27px;
+}
+
+::placeholder {
+    color: lightgray
+}
