@@ -62,8 +62,8 @@ export default function Sidebar() {
                     aria-labelledby="home-tab"
                 >
                     <ul className="metismenu list-unstyled" id="side-menu">
-                        <li className={activePage === 'dashboard' ? 'mm-active' : ''} >
-                            <Link className={`sidebar-links ${activePage === 'dashboard' ? 'activee' : ''}`} tabIndex='-1' to="/dashboard">
+                        <li className={activePage == 'dashboard' ? 'mm-active' : ''} >
+                            <Link className={`sidebar-links ${activePage == 'dashboard' ? 'activee' : ''}`} tabIndex='-1' to="/dashboard">
                                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" 
                                     width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M21 20h-1V5a1 1 0 0 0-2 0v15h-2V9a1 1 0 0 0-2 0v11h-2v-7a1 1 0 0 0-2 0v7H8v-3a1 1 0 0 0-2 0v3H4V3a1 1 0 0 0-2 0v18a1 1 0 0 0 1 1h18a1 1 0 0 0 0-2Z"/>
@@ -71,8 +71,8 @@ export default function Sidebar() {
                                 <span>Главная</span>
                             </Link>
                         </li>
-                        <li className={activePage === 'documents-in' ? 'mm-active' : ''} >
-                            <Link className={`sidebar-links ${activePage === 'documents-in' ? 'activee' : ''}`} tabIndex='-1' to="/documents-in">
+                        <li className={activePage == 'documents-in' ? 'mm-active' : ''} >
+                            <Link className={`sidebar-links ${activePage == 'documents-in' ? 'activee' : ''}`} tabIndex='-1' to="/documents-in">
                                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" 
                                     width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M11.29 17.3L10 18.59V7a1 1 0 0 0-2 0v11.6l-1.29-1.3a1 1 0 0 0-1.42 0a1 1 0 0 0 0 1.41l3 3a1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 0-1.41a1 1 0 0 0-1.42 0ZM22 3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2a1 1 0 0 0 0-2H4V4h16v4h-7a1 1 0 0 0 0 2h1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9Zm-2 11h-4v-4h4Z"/>
@@ -80,8 +80,8 @@ export default function Sidebar() {
                                 <span>Прием товаров</span>
                             </Link>
                         </li>
-                        <li className={activePage === 'nomenclature' ? 'mm-active' : ''} >
-                            <Link className={`sidebar-links ${activePage === 'nomenclature' ? 'activee' : ''}`} tabIndex='-1' to="/nomenclature">
+                        <li className={activePage == 'nomenclature' ? 'mm-active' : ''} >
+                            <Link className={`sidebar-links ${activePage == 'nomenclature' ? 'activee' : ''}`} tabIndex='-1' to="/nomenclature">
                                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" 
                                     width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M3.71 16.29a1 1 0 0 0-.33-.21a1 1 0 0 0-.76 0a1 1 0 0 0-.33.21a1 1 0 0 0-.21.33a1 1 0 0 0 .21 1.09a1.15 1.15 0 0 0 .33.21a.94.94 0 0 0 .76 0a1.15 1.15 0 0 0 .33-.21a1 1 0 0 0 .21-1.09a1 1 0 0 0-.21-.33ZM7 8h14a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2Zm-3.29 3.29a1 1 0 0 0-1.09-.21a1.15 1.15 0 0 0-.33.21a1 1 0 0 0-.21.33a.94.94 0 0 0 0 .76a1.15 1.15 0 0 0 .21.33a1.15 1.15 0 0 0 .33.21a.94.94 0 0 0 .76 0a1.15 1.15 0 0 0 .33-.21a1.15 1.15 0 0 0 .21-.33a.94.94 0 0 0 0-.76a1 1 0 0 0-.21-.33ZM21 11H7a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2ZM3.71 6.29a1 1 0 0 0-.33-.21a1 1 0 0 0-1.09.21a1.15 1.15 0 0 0-.21.33a.94.94 0 0 0 0 .76a1.15 1.15 0 0 0 .21.33a1.15 1.15 0 0 0 .33.21a1 1 0 0 0 1.09-.21a1.15 1.15 0 0 0 .21-.33a.94.94 0 0 0 0-.76a1.15 1.15 0 0 0-.21-.33ZM21 16H7a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2Z"/>
@@ -134,8 +134,8 @@ export default function Sidebar() {
                                 <span>Перемещение</span>
                             </Link>
                         </li>
-                        <li className={activePage === 'inventory' ? 'mm-active' : ''}>
-                            <Link className={`sidebar-links ${activePage === 'inventory' ? 'activee' : ''}`} tabIndex='-1' to="/inventory">
+                        <li className={activePage == 'inventory' ? 'mm-active' : ''}>
+                            <Link className={`sidebar-links ${activePage == 'inventory' ? 'activee' : ''}`} tabIndex='-1' to="/inventory">
                                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" 
                                     width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M5.5 8H6v.5a1 1 0 0 0 2 0V8h.5a1 1 0 0 0 0-2H8v-.5a1 1 0 0 0-2 0V6h-.5a1 1 0 0 0 0 2Zm-.62 11.12a1 1 0 0 0 1.41 0l.71-.71l.71.71a1 1 0 0 0 1.41 0a1 1 0 0 0 0-1.41L8.41 17l.71-.71a1 1 0 0 0-1.41-1.41l-.71.71l-.71-.71a1 1 0 0 0-1.41 1.41l.71.71l-.71.71a1 1 0 0 0 0 1.41ZM20 1H4a3 3 0 0 0-3 3v16a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3V4a3 3 0 0 0-3-3Zm-9 20H4a1 1 0 0 1-1-1v-7h8Zm0-10H3V4a1 1 0 0 1 1-1h7Zm10 9a1 1 0 0 1-1 1h-7v-8h8Zm0-9h-8V3h7a1 1 0 0 1 1 1Zm-5.5 5.5h3a1 1 0 0 0 0-2h-3a1 1 0 0 0 0 2Zm3-10.5h-3a1 1 0 0 0 0 2h3a1 1 0 0 0 0-2Zm-3 13.5h3a1 1 0 0 0 0-2h-3a1 1 0 0 0 0 2Z"/>

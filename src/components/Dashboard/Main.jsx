@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row } from "react-bootstrap";
 import ReactApexChart from 'react-apexcharts'
 
 import { numberFormatter } from '../../utils/formatter'
@@ -101,32 +100,32 @@ export default function Main() {
             <div>
                 <h4 className="header-text">Главная</h4>
             </div>
-            <Row className='mb-3'>
-                <Col md={3}>
+            <div className='row mb-3'>
+                <div className="col md-3">
                     <div className="card-item">
                         <div>
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.grossIncome)}</p>
                             <p className="mb-0 card-item-subtext">Валовый доход</p>
                         </div>
                     </div>
-                </Col>
-                <Col md={3}>
+                </div>
+                <div className="col md-3">
                     <div className="card-item">
                         <div>
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.frozenAmount)}</p>
                             <p className="mb-0 card-item-subtext">Замороженные средства</p>
                         </div>
                     </div>
-                </Col>
-                <Col md={3}>
+                </div>
+                <div className="col md-3">
                     <div className="card-item">
                         <div>
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.avgChequeAmount)}</p>
                             <p className="mb-0 card-item-subtext">Средний чек</p>
                         </div>
                     </div>
-                </Col>
-                <Col md={3}>
+                </div>
+                <div className="col md-3">
                     <div className="card-item flex-column">
                         <div className="d-flex justify-content-between">
                             <p className="card-item-text mb-0">{numberFormatter(chartInfo?.cashAmount)}</p>
@@ -143,10 +142,10 @@ export default function Main() {
                             </div>
                         </div>
                     </div>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
                     <div className="card">
                       <ReactApexChart 
                         options={options} 
@@ -155,8 +154,8 @@ export default function Main() {
                         height={350}
                       />
                     </div>
-                </Col>
-            </Row>
+                </div>
+            </div>
         </div>
     )
 }

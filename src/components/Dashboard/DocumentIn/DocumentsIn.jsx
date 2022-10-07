@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import ReactPaginate from 'react-paginate';
 import {DebounceInput} from 'react-debounce-input';
 import {utils,writeFileXLSX} from 'xlsx'
-import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import { GET } from "../../../api/api";

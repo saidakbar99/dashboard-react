@@ -1,4 +1,3 @@
-// get all fetches here
 import axios from 'axios'
 
 export const GET = async(url, token) => {
@@ -18,3 +17,4 @@ export const GET = async(url, token) => {
         window.location.reload()
     }
 }
+

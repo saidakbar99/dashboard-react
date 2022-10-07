@@ -28,6 +28,7 @@ const optionsPayment = [
 ]
 
 export default function Create() {
+
     const [selectDisabled, setSelectDisabled] = useState(false)
 
     const [barcodeSearch,setBarcodeSearch] = useState(false)
@@ -74,6 +75,8 @@ export default function Create() {
     const [newSerial, setNewSerial] = useState('')
     const [serialProduct, setSerialProduct] = useState({})
     const [serialProductIndex, setSerialProductIndex] = useState()
+
+    const [isSearchEmpty, setIsSearchEmpty] = useState(false)
     
     function setOptions(res, arr) {
         for(let i=0;i<res.length;i++){
@@ -111,17 +114,33 @@ export default function Create() {
     }
 
     function addProduct(product) {
+        // Promise.resolve()
+        //     .then(() => { setAddedProducts([...addedProducts, product])})
+        //     .then(() => {
+        //         if(barcodeSearch){
+        //             afterAddInput.current.focus()
+        //      }
+        // })
+        const byId = document.getElementById(addedProducts.length)
+        setTimeout(() => {
+            byId.select()
+        }, 200);
+
         product.serialNumbers = []
+        product.quantity = ''
         setAddedProducts([...addedProducts, product])
+        
         const newSearchedProducts = searchedProducts.filter(obj => {
             return obj.productId !== product.productId
         })
         setSearchedProducts(newSearchedProducts)
         setCanSave(true)
-        if(!newSearchedProducts.length){
+        if(searchedProducts.length === 1){
             clearSearch()
             setShowResult(false)
         }
+        
+        
     }
     
     function deleteProduct(id) {
@@ -153,22 +172,31 @@ export default function Create() {
         setWaitingForSearch(false)
         createUrl = `https://cabinet.mdokon.uz/services/web/api/product-in-helper?name=${input}&posId=${posSelect.value}&barcode=${barcodeSearch}&currencyId=${currencySelect.value}`
         GET(createUrl, token).then((result) => {
-            if(result.data.length === 1) {
+            // if(result.data.length < 2) {
+            //     addProduct(result.data[0])
+            //     setWaitingForSearch(true)
+            //     setShowResult(false)
+            //     setCanSave(true)
+            //     setCreateName("")
+            // }
+            if(barcodeSearch){
                 addProduct(result.data[0])
-                setCreateName('')
                 setWaitingForSearch(true)
                 setShowResult(false)
-                setSelectDisabled(true)
                 setCanSave(true)
+                setCreateName("")
             }else{
                 setSearchedProducts(result.data)
                 setShowResult(true)
                 setCreateName(input)
                 setWaitingForSearch(false)
                 setShowQRIcon(false)
+                setIsSearchEmpty(false)
+                if(result.data.length<1){
+                    setIsSearchEmpty(true)
+                }
             }
         })
-        setCreateName('')
         setSelectDisabled(true)
     }
 
@@ -240,8 +268,6 @@ export default function Create() {
         }
     }
 
-    
-
     function createNewProduct(newProduct,token) {
         closeModal()
         createProduct(newProduct, token)
@@ -305,7 +331,7 @@ export default function Create() {
         }
     }
     function chooseOrg(option) {
-        if(option.label == 'Добавить новое'){
+        if(option.label === 'Добавить новое'){
             setModalOrg(true)
         }else{
             setOrganizationId(option.value)
@@ -526,11 +552,13 @@ export default function Create() {
                                                 <div className='d-flex justify-content-center'>
                                                     <input
                                                         name='quantity'
+                                                        id={i+1}
                                                         type="text" 
                                                         className={`addedProduct-input ${addedProducts[i].quantity < 1 || addedProducts[i].quantity === undefined ? 'input-error' : ''}`}
                                                         value={p?.quantity}
                                                         onChange={(e) => handleInputChange(e,i)}
                                                         onKeyPress={onlyNumbers}
+                                                        autoComplete='off'
                                                     />
                                                 </div>
                                             </td>
@@ -608,6 +636,7 @@ export default function Create() {
                                                         selected={startDate[i]}
                                                         onChange={(date) => {changeDate(date,i)}}
                                                         onKeyPress={onlyNumbers}
+                                                        autoComplete='off'
                                                     />
                                                 </div>
                                             </td>
@@ -668,46 +697,52 @@ export default function Create() {
                                     debounceTimeout={500}
                                     onChange={e => searchHandle(e)}
                                     placeholder='Поиск...'
-                                    value={createName}
+                                    value={createName ? createName : ''}
                                 />
                             </div>
 
                             {waitingForSearch ? '' : showResult 
-                            ?   <div className='table-responsive position-fix bg-white table-scroll-create-y w-100 p-3 dropdown-table' id='searchedProducts-table'>
-                                    <table  className="table table-striped border-for-table">
-                                        <thead>
-                                            <tr id='create-table'>
-                                                <th className='text-left vertical-center'>Наименование товара</th>
-                                                <th className='text-center vertical-center'>Штрих-код</th>
-                                                <th className='text-center vertical-center'>Количество</th>
-                                                <th className='text-center vertical-center'>Действие</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {searchedProducts.map(p => {
-                                                return(
-                                                    <tr key={p.barcode}>
-                                                        <td>{p.name}</td>
-                                                        <td className='text-center'>{p.barcode}</td>
-                                                        <td className='text-center'>{p.balance} {p.uomName}</td>
-                                                        <td className='text-center'>
-                                                            {p.productShow 
-                                                            ?   <div className='add-icon-container mx-4'>
-                                                                    <i 
-                                                                        onClick={() =>addProduct(p)} 
-                                                                        className="bi bi-plus"
-                                                                        id='create-add-icon'
-                                                                    ></i>
-                                                                </div>
-                                                            :    <span className='text-danger white-space-wrap'>Выберите другую валюту</span>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            ?   isSearchEmpty
+                                ?   <span className='dropdown-search-menu'>
+                                        <div className="dropdown-menu-list d-flex justify-content-between p-2">
+                                            <span className="dropdown-menu-result fz-20 c-626262">Товар не найден</span>
+                                        </div>
+                                    </span>
+                                :   <div className='table-responsive position-fix bg-white table-scroll-create-y w-100 p-3 dropdown-table' id='searchedProducts-table'>
+                                        <table  className="table table-striped border-for-table">
+                                            <thead>
+                                                <tr id='create-table'>
+                                                    <th className='text-left vertical-center'>Наименование товара</th>
+                                                    <th className='text-center vertical-center'>Штрих-код</th>
+                                                    <th className='text-center vertical-center'>Количество</th>
+                                                    <th className='text-center vertical-center'>Действие</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {searchedProducts.map(p => {
+                                                    return(
+                                                        <tr key={p.barcode}>
+                                                            <td>{p.name}</td>
+                                                            <td className='text-center'>{p.barcode}</td>
+                                                            <td className='text-center'>{p.balance} {p.uomName}</td>
+                                                            <td className='text-center'>
+                                                                {p.productShow 
+                                                                ?   <div className='add-icon-container mx-4'>
+                                                                        <i 
+                                                                            onClick={() =>addProduct(p)} 
+                                                                            className="bi bi-plus"
+                                                                            id='create-add-icon'
+                                                                        ></i>
+                                                                    </div>
+                                                                :    <span className='text-danger white-space-wrap'>Выберите другую валюту</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
                             :   <div className="d-flex justify-content-center my-2 text-primary position-fix w-100">
                                     <div className="spinner-border" role="status">
                                     <span className="sr-only"></span>
@@ -960,8 +995,6 @@ export default function Create() {
                     </div>
                 </div>
             </MyModal>
-            
         </div>
     )
 }
-

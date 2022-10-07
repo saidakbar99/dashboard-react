@@ -1114,3 +1114,27 @@ h5 strong {
 .btn-outline-warning:hover {
     color: white !important;
 }
+
+.dropdown-menu-list {
+    overflow: auto!important;
+    background-color: #fff;
+    border: 2px solid hsla(0,0%,89.4%,.6);
+    border-top: 1px solid hsla(0,0%,89.4%,.6);
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 4px 4px 0 hsl(0deg 0% 95% / 35%);
+    font-size: 15px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    max-height: 400px;
+    overflow-y: scroll;
+    margin-bottom: 5px;
+}
+.dropdown-search-menu {
+    position: absolute;
+    display: grid;
+    top: 77%;
+    width: 100%;
+    z-index: 1;
+    right: auto;
+}
